@@ -38,7 +38,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-screen justify-center">
-        <div className="w-full xl:max-w-7xl md:max-w-2xl border-x border-slate-400">
+        <div className="w-full xl:max-w-7xl md:max-w-2xl sm:max-w-lg border-x border-slate-400">
           <div className="border-b border-slate-400 p-4 flex">
             {!user.isSignedIn && (<div className="flex justify-center">
               <SignInButton />
@@ -46,7 +46,7 @@ export default function Home() {
             )}
             {!!user.isSignedIn && <WelcomeWagon />}
           </div>
-          <div className="grid grid-flow-col col-auto auto-cols-max">
+          <div className="flex flex-wrap gap-4 justify-evenly">
             {[...data]?.map((artist) => (
               <div key={artist.id} className="p-8 text-center text-slate-200">
                 <img src={artist.image} alt='Artist Image' className="h-32 w-32 rounded-full" /> {artist.name}
