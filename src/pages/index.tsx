@@ -9,7 +9,11 @@ export default function Home() {
 
   const user = useUser();
 
-  const { data } = api.artist.getAll.useQuery();
+  const { data, isLoading } = api.artist.getAll.useQuery();
+
+  if (isLoading) return <div>Loading...</div>
+
+  if (!data) return <div>Something went wrong!</div>
 
   return (
     <>
@@ -18,15 +22,20 @@ export default function Home() {
         <meta name="description" content="Spot the Vinyl" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div>
-          {!user.isSignedIn && <SignInButton />}
-          {!!user.isSignedIn && <SignOutButton />}
+      <main className="flex h-screen justify-center">
+        <div className="w-full xl:max-w-7xl md:max-w-2xl border-x border-slate-400">
+          <div className="border-b border-slate-400 p-4 flex">
+            {!user.isSignedIn && (<div className="flex justify-center">
+              <SignInButton />
+            </div>
+            )}
+            {!!user.isSignedIn && <SignOutButton />}
+          </div>
+          <div className="flex flex-col">
+            {[...data]?.map((artist) => (
+              <div key={artist.id} className="p-8 border-b border-slate-400">{artist.name}</div>))}
+          </div>
         </div>
-        <div>
-          {data?.map((artist) => (<div key={artist.id}>{artist.name}</div>))}
-        </div>
-        <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
       </main>
     </>
   );
