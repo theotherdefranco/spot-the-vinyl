@@ -2,21 +2,34 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
-
 
 generator client {
   provider = "prisma-client-js"
 }
 
-model Example {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Artist {
+  id    String @id @default(cuid())
+  name  String @db.VarChar(255)
+  image String 
+}
 
-    @@index([name])
+model Users {
+  id    String @id @default(cuid())
+  name  String @db.VarChar(255)
+  email String @db.VarChar(255)
+}
+
+model Deals {
+  id        String   @id @default(cuid())
+  site      String   @db.VarChar(255)
+  price     Decimal  @db.Decimal(10, 2)
+  artist    String   @db.VarChar(255)
+  album     String   @db.VarChar(255)
+  updatedAt DateTime @default(now())
+
+  @@index([artist])
 }
