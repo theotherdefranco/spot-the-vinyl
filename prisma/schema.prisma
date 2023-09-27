@@ -12,24 +12,30 @@ generator client {
 }
 
 model Artist {
-  id    String @id @default(cuid())
-  name  String @db.VarChar(255)
-  image String 
-}
-
-model Users {
-  id    String @id @default(cuid())
-  name  String @db.VarChar(255)
-  email String @db.VarChar(255)
+  id          String        @id @default(cuid())
+  name        String        @unique @db.VarChar(255)
+  image       String
+  UserArtists UserArtists[]
+  Deals       Deals[]
 }
 
 model Deals {
-  id        String   @id @default(cuid())
-  site      String   @db.VarChar(255)
-  price     Decimal  @db.Decimal(10, 2)
-  artist    String   @db.VarChar(255)
-  album     String   @db.VarChar(255)
-  updatedAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  site       String
+  price      Decimal  @db.Decimal(10, 2)
+  artist     Artist   @relation(fields: [artistName], references: [name])
+  artistName String
+  album      String
+  updatedAt  DateTime @default(now())
 
-  @@index([artist])
+  @@index([artistName])
+}
+
+model UserArtists {
+  artist   Artist   @relation(fields: [artistId], references: [id])
+  artistId String
+  userId   String
+  assignAt DateTime @default(now())
+
+  @@id([artistId, userId])
 }
