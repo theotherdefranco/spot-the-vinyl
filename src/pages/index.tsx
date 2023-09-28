@@ -9,7 +9,7 @@ import { Sign } from "crypto";
 
 async function SignInSpotifyAuth() {
   const spot = SpotifyApi.withUserAuthorization(
-    env.NEXT_PUBLIC_VITE_SPOTIFY_CLIENT_ID, "http://localhost:3000/",
+    env.NEXT_PUBLIC_VITE_SPOTIFY_CLIENT_ID, "https://spot-the-vinyl.vercel.app",
     ['user-library-read', 'user-read-email', 'user-follow-read',
       'user-top-read']
   );
