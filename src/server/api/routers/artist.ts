@@ -1,8 +1,12 @@
 import { clerkClient, useUser } from "@clerk/nextjs";
+import { SpotifyApi } from '@spotify/web-api-ts-sdk';
 import { User } from "@clerk/nextjs/dist/types/server";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { env } from "~/env.mjs";
+
+
 
 const filterUserForClient = (user: User) => {
 
@@ -12,6 +16,7 @@ const filterUserForClient = (user: User) => {
         profileImageUrl: user.imageUrl
     };
 };
+
 
 export const artistRouter = createTRPCRouter({
     getAll: publicProcedure.query(async ({ ctx }) => {

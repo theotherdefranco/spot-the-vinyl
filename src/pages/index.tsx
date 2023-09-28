@@ -1,9 +1,27 @@
 import Head from "next/head";
 import Link from "next/link";
+import { AuthorizationCodeWithPKCEStrategy, SpotifyApi } from "@spotify/web-api-ts-sdk";
 import { SignIn, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { env } from "~/env.mjs";
 
 import { api } from "~/utils/api";
 import { Sign } from "crypto";
+
+async function SignInSpotifyAuth() {
+  const spot = SpotifyApi.withUserAuthorization(
+    env.NEXT_PUBLIC_VITE_SPOTIFY_CLIENT_ID, "http://localhost:3000/",
+    ['user-library-read', 'user-read-email', 'user-follow-read',
+      'user-top-read']
+  );
+  if (typeof window !== 'undefined') {
+    const top_artists = await spot.currentUser.topItems('artists', "long_term", 30);
+    const followed_artists = await spot.currentUser.followedArtists();
+    console.log(top_artists);
+    console.log(followed_artists);
+  }
+
+}
+
 
 const WelcomeWagon = () => {
 
@@ -25,6 +43,8 @@ export default function Home() {
   //add user into DB
 
   const { data, isLoading } = api.artist.getAll.useQuery();
+
+  void SignInSpotifyAuth()
 
   if (isLoading) return <div className="flex justify-left">Loading...</div>
 
