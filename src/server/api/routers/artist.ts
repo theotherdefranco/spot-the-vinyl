@@ -55,7 +55,7 @@ export const artistRouter = createTRPCRouter({
 
       await ctx.db.userArtists.createMany({
         data: {
-          userId: userId,
+          userId: currentUserId,
           artistId: "3aQeKQSyrW4qWr35idm0cy",
         },
         skipDuplicates: true,
