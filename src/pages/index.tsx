@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { SpotifyApi } from "@spotify/web-api-ts-sdk";
+import { SpotifyApi, type Page, type Artist } from "@spotify/web-api-ts-sdk";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { env } from "~/env.mjs";
 
@@ -10,10 +10,50 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import { LoadingPage } from "~/components/loading";
+import { useState, useEffect, useMemo } from "react";
 
 dayjs.extend(relativeTime);
 
-async function SignInSpotifyAuth() {
+function GetTopArtists({ spot }: { spot: SpotifyApi }) {
+  const [results, setResults] = useState<Page<Artist>>({} as Page<Artist>);
+
+  useEffect(() => {
+    let isMounted = true; // Add a flag to check if the component is still mounted
+
+    async function fetchTopArtists() {
+      if (isMounted) {
+        const newResults = await spot.currentUser.topItems(
+          "artists",
+          "long_term",
+          30
+        );
+        setResults(newResults);
+      }
+    }
+
+    void fetchTopArtists();
+
+    return () => {
+      isMounted = false; // Set the flag to false when the component unmounts
+    };
+  }, []); // Empty dependency array ensures this effect only runs once
+
+  const artistsToAdd: {
+    id: string;
+    name: string;
+    image: string;
+  }[] = results.items?.map((artist) => ({
+    id: artist.id,
+    name: artist.name,
+    image: artist.images[0]?.url ?? '',
+  })) || [];
+
+  console.log(artistsToAdd);
+
+  return artistsToAdd;
+}
+
+function SignInSpotifyAuth() {
   const spot = SpotifyApi.withUserAuthorization(
     env.NEXT_PUBLIC_VITE_SPOTIFY_CLIENT_ID,
     "https://spot-the-vinyl.vercel.app",
@@ -24,16 +64,8 @@ async function SignInSpotifyAuth() {
       "user-top-read",
     ],
   );
-  if (typeof window !== "undefined") {
-    const top_artists = await spot.currentUser.topItems(
-      "artists",
-      "long_term",
-      30,
-    );
-    const followed_artists = await spot.currentUser.followedArtists();
-    console.log(top_artists);
-    console.log(followed_artists);
-  }
+
+  return spot;
 }
 
 const WelcomeWagon = () => {
@@ -41,8 +73,19 @@ const WelcomeWagon = () => {
 
   if (!user) return null;
 
+  const spot = SignInSpotifyAuth();
+  const artistsToAdd = GetTopArtists({ spot });
+
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: isPopulating } = api.artist.create.useMutation({
+    onSuccess: () => {
+      void ctx.artist.getAll.invalidate();
+    },
+  });
+
   return (
-    <div className="flex items-center gap-4 text-xl">
+    <div className="flex grow items-center gap-4 text-xl">
       <Image
         src={user.imageUrl}
         alt="Profile image"
@@ -51,6 +94,15 @@ const WelcomeWagon = () => {
         height={56}
       />
       <p>Welcome {user.fullName}</p>
+      <div className=" flex grow place-content-end justify-items-end ">
+        <button
+          className="flex justify-items-end gap-4 border"
+          onClick={() => mutate(artistsToAdd)}
+          disabled={isPopulating}
+        >
+          Update Artists
+        </button>
+      </div>
     </div>
   );
 };
@@ -84,7 +136,7 @@ const Feed = () => {
   return (
     <div>
       <div className="flex flex-wrap justify-evenly gap-4">
-        {[...data]?.map((fullArtist) => (
+        {data.map((fullArtist) => (
           <ArtistView {...fullArtist} key={fullArtist.id} />
         ))}
       </div>
@@ -100,8 +152,6 @@ export default function Home() {
 
   // Return empty div if user isn't loaded yet
   if (!userLoaded) return <div />;
-
-  void SignInSpotifyAuth();
 
   return (
     <>

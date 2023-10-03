@@ -17,9 +17,20 @@ const filterUserForClient = (user: User) => {
   };
 };
 
+import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
+import { Redis } from "@upstash/redis"; // see below for cloudflare and fastly adapters
+import { TRPCError } from "@trpc/server";
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(3, "1 h"),
+  analytics: true,
+  prefix: "@upstash/ratelimit",
+});
+
 export const artistRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
-    const currentUserId = ctx.currentUser?.toString()
+    const currentUserId = ctx.currentUser?.toString();
     const arists = await ctx.db.artist.findMany({
       take: 100,
       where: {
@@ -29,35 +40,39 @@ export const artistRouter = createTRPCRouter({
           },
         },
       },
+      orderBy: [{ name: "asc" }],
     });
     return arists;
   }),
   create: privateProcedure
     .input(
+      z.array(
         z.object({
-            content: z.string().min(1).max(280),
+          id: z.string(),
+          name: z.string(),
+          image: z.string().url(),
         })
+      )
     )
     .mutation(async ({ ctx, input }) => {
-      const currentUserId = ctx.currentUser?.toString()
+      const currentUserId = ctx.currentUser?.toString();
+
+      const { success } = await ratelimit.limit(currentUserId);
+
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       const artist = await ctx.db.artist.createMany({
-        data: [
-          {
-            id: "3aQeKQSyrW4qWr35idm0cy",
-            name: "T-Pain",
-            image:
-              "https://i.scdn.co/image/ab6761610000e5ebe9dd7dc12046ef96343a9b7c",
-          },
-        ],
+        data: input,
         skipDuplicates: true,
       });
 
+      const createManyData: {
+        userId: string;
+        artistId: string;
+      }[] = input.map((i) => ({userId: currentUserId, artistId: i.id}))
+
       await ctx.db.userArtists.createMany({
-        data: {
-          userId: currentUserId,
-          artistId: "3aQeKQSyrW4qWr35idm0cy",
-        },
+        data: createManyData,
         skipDuplicates: true,
       });
       return artist;
