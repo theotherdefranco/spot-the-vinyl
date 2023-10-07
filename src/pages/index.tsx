@@ -67,6 +67,7 @@ function SignInSpotifyAuth() {
       "user-top-read",
     ],
   );
+  console.log(spot.currentUser.profile())
   return spot;
 }
 
