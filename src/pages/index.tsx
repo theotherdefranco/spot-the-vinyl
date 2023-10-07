@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import { LoadingPage } from "~/components/loading";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
 dayjs.extend(relativeTime);
 
@@ -22,10 +22,11 @@ function GetTopArtists({ spot }: { spot: SpotifyApi }) {
 
     async function fetchTopArtists() {
       if (isMounted) {
+        await spot.authenticate();
         const newResults = await spot.currentUser.topItems(
           "artists",
           "long_term",
-          30
+          30,
         );
         setResults(newResults);
       }
@@ -42,11 +43,12 @@ function GetTopArtists({ spot }: { spot: SpotifyApi }) {
     id: string;
     name: string;
     image: string;
-  }[] = results.items?.map((artist) => ({
-    id: artist.id,
-    name: artist.name,
-    image: artist.images[0]?.url ?? '',
-  })) || [];
+  }[] =
+    results.items?.map((artist) => ({
+      id: artist.id,
+      name: artist.name,
+      image: artist.images[0]?.url ?? "",
+    })) || [];
 
   console.log(artistsToAdd);
 
@@ -64,7 +66,6 @@ function SignInSpotifyAuth() {
       "user-top-read",
     ],
   );
-
   return spot;
 }
 
