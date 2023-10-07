@@ -23,7 +23,7 @@ import { TRPCError } from "@trpc/server";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(3, "1 h"),
+  limiter: Ratelimit.slidingWindow(5, "10 m"),
   analytics: true,
   prefix: "@upstash/ratelimit",
 });
