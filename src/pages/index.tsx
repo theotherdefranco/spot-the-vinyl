@@ -23,6 +23,7 @@ function GetTopArtists({ spot }: { spot: SpotifyApi }) {
     async function fetchTopArtists() {
       if (isMounted) {
         await spot.authenticate();
+        console.log((await spot.currentUser.profile()).display_name)
         const newResults = await spot.currentUser.topItems(
           "artists",
           "long_term",
@@ -162,7 +163,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-screen justify-center">
-        <div className="w-full border-x border-slate-400 sm:max-w-lg md:max-w-2xl xl:max-w-7xl">
+        <div className="w-full border-x border- border-slate-400 sm:max-w-lg md:max-w-2xl xl:max-w-7xl">
           <div className="flex border-b border-slate-400 p-4">
             {!isSignedIn && (
               <div className="flex justify-center">
