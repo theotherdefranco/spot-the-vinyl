@@ -52,7 +52,6 @@ function GetTopArtists() {
     }
     async function fetchFollowArtists() {
       if (isMounted) {
-        await spot.authenticate();
         const followResults = await spot.currentUser.followedArtists();
         setFollowResults(followResults);
       }
@@ -81,7 +80,7 @@ function GetTopArtists() {
           id: followArtist.id,
           name: followArtist.name,
           image: followArtist.images[0]?.url ?? "",
-        })),
+        }) || [])
       ) || [];
 
   return artistsToAdd;
