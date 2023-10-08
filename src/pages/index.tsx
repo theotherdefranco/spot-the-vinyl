@@ -14,16 +14,24 @@ import { useState, useEffect } from "react";
 
 dayjs.extend(relativeTime);
 
-function GetTopArtists({ spot }: { spot: SpotifyApi }) {
+function GetTopArtists() {
   const [results, setResults] = useState<Page<Artist>>({} as Page<Artist>);
 
   useEffect(() => {
     let isMounted = true; // Add a flag to check if the component is still mounted
-
+    const spot = SpotifyApi.withUserAuthorization(
+      env.NEXT_PUBLIC_VITE_SPOTIFY_CLIENT_ID,
+      "https://spot-the-vinyl.vercel.app",
+      [
+        "user-library-read",
+        "user-read-email",
+        "user-follow-read",
+        "user-top-read",
+      ],
+    );
     async function fetchTopArtists() {
       if (isMounted) {
         await spot.authenticate();
-        console.log((await spot.currentUser.profile()).display_name)
         const newResults = await spot.currentUser.topItems(
           "artists",
           "long_term",
@@ -34,7 +42,6 @@ function GetTopArtists({ spot }: { spot: SpotifyApi }) {
     }
 
     void fetchTopArtists();
-
     return () => {
       isMounted = false; // Set the flag to false when the component unmounts
     };
@@ -51,35 +58,17 @@ function GetTopArtists({ spot }: { spot: SpotifyApi }) {
       image: artist.images[0]?.url ?? "",
     })) || [];
 
-  console.log(artistsToAdd);
-
   return artistsToAdd;
-}
-
-function SignInSpotifyAuth() {
-  const spot = SpotifyApi.withUserAuthorization(
-    env.NEXT_PUBLIC_VITE_SPOTIFY_CLIENT_ID,
-    "https://spot-the-vinyl.vercel.app",
-    [
-      "user-library-read",
-      "user-read-email",
-      "user-follow-read",
-      "user-top-read",
-    ],
-  );
-  console.log(spot.currentUser.profile())
-  return spot;
 }
 
 const WelcomeWagon = () => {
   const { user } = useUser();
 
-  if (!user) return null;
-
-  const spot = SignInSpotifyAuth();
-  const artistsToAdd = GetTopArtists({ spot });
-
   const ctx = api.useContext();
+
+  const artistsToAdd = GetTopArtists();
+
+  if (!user) return <div>Loading Spotify authentication...</div>;
 
   const { mutate, isLoading: isPopulating } = api.artist.create.useMutation({
     onSuccess: () => {
@@ -95,6 +84,7 @@ const WelcomeWagon = () => {
         className="rounded-lg"
         width={56}
         height={56}
+        priority={false}
       />
       <p>Welcome {user.fullName}</p>
       <div className=" flex grow place-content-end justify-items-end ">
@@ -150,11 +140,12 @@ const Feed = () => {
 export default function Home() {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
-  // Start fetching asap
   api.artist.getAll.useQuery();
 
   // Return empty div if user isn't loaded yet
-  if (!userLoaded) return <div />;
+  if (!userLoaded) {
+    return <div />;
+  }
 
   return (
     <>
@@ -164,7 +155,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-screen justify-center">
-        <div className="w-full border-x border- border-slate-400 sm:max-w-lg md:max-w-2xl xl:max-w-7xl">
+        <div className="border- w-full border-x border-slate-400 sm:max-w-lg md:max-w-2xl xl:max-w-7xl">
           <div className="flex border-b border-slate-400 p-4">
             {!isSignedIn && (
               <div className="flex justify-center">
