@@ -1,4 +1,9 @@
-import { SpotifyApi, type Page, type Artist } from "@spotify/web-api-ts-sdk";
+import {
+  SpotifyApi,
+  type Page,
+  type Artist,
+  type FollowedArtists,
+} from "@spotify/web-api-ts-sdk";
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { env } from "~/env.mjs";
 
@@ -15,7 +20,12 @@ import { toast } from "react-hot-toast";
 dayjs.extend(relativeTime);
 
 function GetTopArtists() {
-  const [results, setResults] = useState<Page<Artist>>({} as Page<Artist>);
+  const [topResults, setTopResults] = useState<Page<Artist>>(
+    {} as Page<Artist>,
+  );
+  const [followResults, setFollowResults] = useState<FollowedArtists>(
+    {} as FollowedArtists,
+  );
 
   useEffect(() => {
     let isMounted = true; // Add a flag to check if the component is still mounted
@@ -31,17 +41,25 @@ function GetTopArtists() {
     );
     async function fetchTopArtists() {
       if (isMounted) {
-        await spot.authenticate()
-        const newResults = await spot.currentUser.topItems(
+        await spot.authenticate();
+        const topResults = await spot.currentUser.topItems(
           "artists",
           "long_term",
           30,
         );
-        setResults(newResults);
+        setTopResults(topResults);
+      }
+    }
+    async function fetchFollowArtists() {
+      if (isMounted) {
+        await spot.authenticate();
+        const followResults = await spot.currentUser.followedArtists();
+        setFollowResults(followResults);
       }
     }
 
     void fetchTopArtists();
+    void fetchFollowArtists();
     return () => {
       isMounted = false; // Set the flag to false when the component unmounts
     };
@@ -52,12 +70,20 @@ function GetTopArtists() {
     name: string;
     image: string;
   }[] =
-    results.items?.map((artist) => ({
-      id: artist.id,
-      name: artist.name,
-      image: artist.images[0]?.url ?? "",
-    })) || [];
-  
+    topResults.items
+      ?.map((artist) => ({
+        id: artist.id,
+        name: artist.name,
+        image: artist.images[0]?.url ?? "",
+      }))
+      .concat(
+        followResults.artists.items?.map((followArtist) => ({
+          id: followArtist.id,
+          name: followArtist.name,
+          image: followArtist.images[0]?.url ?? "",
+        })),
+      ) || [];
+
   return artistsToAdd;
 }
 
@@ -154,8 +180,6 @@ const Feed = () => {
 
 export default function Home() {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
-
-  api.artist.getAll.useQuery();
 
   // Return empty div if user isn't loaded yet
   if (!userLoaded) {
