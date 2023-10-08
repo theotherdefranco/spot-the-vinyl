@@ -122,6 +122,10 @@ const ArtistView = (props: ArtistFromUser) => {
 const Feed = () => {
   const { data, isLoading: artistLoading } = api.artist.getAll.useQuery();
 
+  const { isSignedIn } = useUser();
+
+  if (!isSignedIn) return <div>Please Sign In!</div>
+
   if (artistLoading) return <LoadingPage />;
 
   if (!data) return <div>Something went wrong</div>;
