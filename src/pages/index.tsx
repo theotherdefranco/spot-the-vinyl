@@ -20,7 +20,6 @@ import { toast } from "react-hot-toast";
 dayjs.extend(relativeTime);
 
 function GetTopArtists() {
-  const { user } = useUser();
 
   const [topResults, setTopResults] = useState<Page<Artist>>(
     {} as Page<Artist>,
@@ -54,6 +53,7 @@ function GetTopArtists() {
     }
     async function fetchFollowArtists() {
       if (isMounted) {
+        await spot.authenticate();
         const followResults = await spot.currentUser.followedArtists();
         setFollowResults(followResults);
       }
