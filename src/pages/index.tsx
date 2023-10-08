@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { SpotifyApi, type Page, type Artist } from "@spotify/web-api-ts-sdk";
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { env } from "~/env.mjs";
@@ -30,9 +29,9 @@ function GetTopArtists() {
         "user-top-read",
       ],
     );
-    console.log("Spoify Current User", spot.currentUser.profile())
     async function fetchTopArtists() {
       if (isMounted) {
+        await spot.authenticate()
         const newResults = await spot.currentUser.topItems(
           "artists",
           "long_term",
@@ -58,7 +57,7 @@ function GetTopArtists() {
       name: artist.name,
       image: artist.images[0]?.url ?? "",
     })) || [];
-
+  
   return artistsToAdd;
 }
 
@@ -68,8 +67,6 @@ const WelcomeWagon = () => {
   const ctx = api.useContext();
 
   const artistsToAdd = GetTopArtists();
-
-  console.log("Welcome Wagon User: ", user)
 
   if (!user) return <div>Loading Spotify authentication...</div>;
 
