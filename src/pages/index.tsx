@@ -76,11 +76,14 @@ function GetTopArtists() {
         image: artist.images[0]?.url ?? "",
       }))
       .concat(
-        followResults.artists?.items?.map((followArtist) => ({
-          id: followArtist.id,
-          name: followArtist.name,
-          image: followArtist.images[0]?.url ?? "",
-        }) || [])
+        followResults.artists?.items?.map(
+          (followArtist) =>
+            ({
+              id: followArtist.id,
+              name: followArtist.name,
+              image: followArtist.images[0]?.url ?? "",
+            }) || [],
+        ),
       ) || [];
 
   return artistsToAdd;
@@ -125,9 +128,10 @@ const WelcomeWagon = () => {
       <p>Welcome {user.fullName}</p>
       <div className=" flex grow place-content-end justify-items-end ">
         <button
-          className="flex justify-items-end gap-4 border"
+          className="flex justify-items-end gap-4 rounded-lg bg-emerald-400 p-1"
           onClick={() => mutate(artistsToAdd)}
           disabled={isPopulating}
+          hidden={isPopulating}
         >
           Update Artists
         </button>
@@ -187,8 +191,8 @@ export default function Home() {
 
   return (
     <main className="flex h-screen justify-center">
-      <div className="border- w-full overflow-y-scroll border-x border-slate-400 sm:max-w-lg md:max-w-2xl xl:max-w-7xl">
-        <div className="flex border-b border-slate-400 p-4">
+      <div className="border- w-full overflow-y-scroll border-x border-emerald-400 sm:max-w-lg md:max-w-2xl xl:max-w-7xl">
+        <div className="flex border-b border-emerald-400 p-4">
           {!isSignedIn && (
             <div className="flex justify-center">
               <SignInButton />
