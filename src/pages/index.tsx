@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { SpotifyApi, type Page, type Artist } from "@spotify/web-api-ts-sdk";
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { env } from "~/env.mjs";
 
 import { api } from "~/utils/api";
@@ -30,9 +30,9 @@ function GetTopArtists() {
         "user-top-read",
       ],
     );
+    console.log("Spoify Current User", spot.currentUser.profile())
     async function fetchTopArtists() {
       if (isMounted) {
-        await spot.authenticate();
         const newResults = await spot.currentUser.topItems(
           "artists",
           "long_term",
@@ -69,6 +69,8 @@ const WelcomeWagon = () => {
 
   const artistsToAdd = GetTopArtists();
 
+  console.log("Welcome Wagon User: ", user)
+
   if (!user) return <div>Loading Spotify authentication...</div>;
 
   const { mutate, isLoading: isPopulating } = api.artist.create.useMutation({
@@ -77,7 +79,7 @@ const WelcomeWagon = () => {
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
-      console.log('zodMessage: ',errorMessage)
+      console.log("zodMessage: ", errorMessage);
       if (errorMessage?.[0]) {
         toast.error(errorMessage[0]);
       } else {
@@ -88,13 +90,15 @@ const WelcomeWagon = () => {
 
   return (
     <div className="flex grow items-center gap-4 text-xl">
-      <Image
-        src={user.imageUrl}
-        alt="Profile image"
-        className="rounded-lg"
-        width={56}
-        height={56}
-        priority={false}
+      <UserButton
+        appearance={{
+          elements: {
+            userButtonAvatarBox: {
+              width: 56,
+              height: 56,
+            },
+          },
+        }}
       />
       <p>Welcome {user.fullName}</p>
       <div className=" flex grow place-content-end justify-items-end ">
@@ -162,25 +166,18 @@ export default function Home() {
   }
 
   return (
-    <>
-      <Head>
-        <title>Spot the Vinyl</title>
-        <meta name="description" content="Spot the Vinyl" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main className="flex h-screen justify-center">
-        <div className="border- w-full border-x border-slate-400 sm:max-w-lg md:max-w-2xl xl:max-w-7xl">
-          <div className="flex border-b border-slate-400 p-4">
-            {!isSignedIn && (
-              <div className="flex justify-center">
-                <SignInButton />
-              </div>
-            )}
-            {!!isSignedIn && <WelcomeWagon />}
-          </div>
-          <Feed />
+    <main className="flex h-screen justify-center">
+      <div className="border- w-full overflow-y-scroll border-x border-slate-400 sm:max-w-lg md:max-w-2xl xl:max-w-7xl">
+        <div className="flex border-b border-slate-400 p-4">
+          {!isSignedIn && (
+            <div className="flex justify-center">
+              <SignInButton />
+            </div>
+          )}
+          {!!isSignedIn && <WelcomeWagon />}
         </div>
-      </main>
-    </>
+        <Feed />
+      </div>
+    </main>
   );
 }
