@@ -11,6 +11,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import { LoadingPage } from "~/components/loading";
 import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
@@ -74,6 +75,15 @@ const WelcomeWagon = () => {
     onSuccess: () => {
       void ctx.artist.getAll.invalidate();
     },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      console.log('zodMessage: ',errorMessage)
+      if (errorMessage?.[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to update artists! Please try again later");
+      }
+    },
   });
 
   return (
@@ -124,7 +134,7 @@ const Feed = () => {
 
   const { isSignedIn } = useUser();
 
-  if (!isSignedIn) return <div>Please Sign In!</div>
+  if (!isSignedIn) return <div>Please Sign In!</div>;
 
   if (artistLoading) return <LoadingPage />;
 
