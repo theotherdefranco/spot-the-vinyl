@@ -76,7 +76,7 @@ function GetTopArtists() {
         image: artist.images[0]?.url ?? "",
       }))
       .concat(
-        followResults.artists.items?.map((followArtist) => ({
+        followResults.artists?.items?.map((followArtist) => ({
           id: followArtist.id,
           name: followArtist.name,
           image: followArtist.images[0]?.url ?? "",
