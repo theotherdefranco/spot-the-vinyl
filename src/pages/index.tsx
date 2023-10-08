@@ -20,6 +20,8 @@ import { toast } from "react-hot-toast";
 dayjs.extend(relativeTime);
 
 function GetTopArtists() {
+  const { user } = useUser();
+
   const [topResults, setTopResults] = useState<Page<Artist>>(
     {} as Page<Artist>,
   );
@@ -56,7 +58,6 @@ function GetTopArtists() {
         setFollowResults(followResults);
       }
     }
-
     void fetchTopArtists();
     void fetchFollowArtists();
     return () => {
@@ -200,7 +201,10 @@ export default function Home() {
           )}
           {!!isSignedIn && <WelcomeWagon />}
         </div>
-        <Feed />
+        {!isSignedIn && (
+          <div className="flex justify-center">Please Sign In</div>
+        )}
+        {!!isSignedIn && <Feed />}
       </div>
     </main>
   );
