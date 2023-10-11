@@ -1,28 +1,22 @@
-# Create T3 App
+# Spot the Vinyl 
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+This was done by following along with the [T3 Stack Tutorial](https://www.youtube.com/watch?v=YkOSUVzOAA4) on Youtube by Theo
 
-## What's next? How do I make an app with this?
+## Intro
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+I had the idea of creating an app or script that uses a Spotify API that would get the top and followed artsits of the user and use those artists to find deals using [Deals On Vinyl](https://dealsonvinyl.com/) to find available vinyl records. I first used python to create a script for this project but wanted to make it more of a web app. I stumbled upon Theo's video where he breaks down how to do this. I had a school project where we used Google App Engine to create a webapp so understood some of the technologies. This was the first time I used typescript as well as all of the T3 stack. The project is still ongoing and can be found at [Spot the Vinyl](spot-the-vinyl.vercel.app) 
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+![Preview](https://github.com/theotherdefranco/spot-the-vinyl/assets/121998407/b30b4624-d6f2-4e39-8b2b-32402cfaa238)
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## Bugs and Upcoming Features 
 
-## Learn More
+Currently there is an issue where when a user first signs in, the Spotify SDK authorization is called but the response of the connection is not quick enough. When the SpotifyApi object is called an error for a nonexistings cache is thrown. Can be mitigated by refreshing the page. 
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+The next features I plan to impliment are: 
+* Webcrawler for Deals on Vinyl
+* Create Artist Pages or Dynamic openings to show the deals
+* Update User's current artisits
+* Create New Name to go public
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+If interested in trying out the site, feel free to message me! 
