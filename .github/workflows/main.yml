@@ -25,5 +25,5 @@ jobs:
     - name: TypeScript typechecking
       run: npm run typecheck
 
-    - name: Run "link" script
-      run: npm run link
+    - name: Lint
+      run: npm run lint
