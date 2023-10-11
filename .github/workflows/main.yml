@@ -9,6 +9,7 @@ on:
 
 env:
   DATABASE_URL: "https://fake.com"
+  NEXT_PUBLIC_VITE_SPOTIFY_CLIENT_ID: "Fake ID"
     
 
 jobs:
