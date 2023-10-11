@@ -32,7 +32,7 @@ function GetTopArtists() {
     let isMounted = true; // Add a flag to check if the component is still mounted
     const spot = SpotifyApi.withUserAuthorization(
       env.NEXT_PUBLIC_VITE_SPOTIFY_CLIENT_ID,
-      "http://localhost:3000/",
+      "https://spot-the-vinyl.vercel.app",
       [
         "user-library-read",
         "user-read-email",
