@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main  # Change this to your main branch name
+  pull_request:
+
+
+env:
+  DATABASE_URL: "https://fake.com"
+    
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: TypeScript typechecking
+      run: npm run typecheck
+
+    - name: Run "link" script
+      run: npm run link
