@@ -18,19 +18,14 @@ import {
  */
 export const createTable = pgTableCreator((name) => `spot-the-vinyl_${name}`);
 
-export const posts = createTable(
-  "post",
+export const artists = createTable(
+  "artist",
   {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date()
-    ),
+    id: varchar("id", { length: 256 }).primaryKey(),
+    name: varchar("name", { length: 256 }).notNull(),
+    image: varchar("image", { length: 1024 }),
   },
   (example) => ({
     nameIndex: index("name_idx").on(example.name),
-  })
+  }),
 );

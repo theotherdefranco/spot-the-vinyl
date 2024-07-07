@@ -4,7 +4,7 @@
 
 - [x] Make it deploy
 - [ ] Rebuild UI structure
-- [ ] Set up the database
+- [x] Set up the database
 - [ ] Attach database and UI
 - [ ] Add auth
 - [ ] Connect Spotify
