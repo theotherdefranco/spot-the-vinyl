@@ -2,7 +2,7 @@
 
 ## TODO
 
-- [ ] Make it deploy
+- [x] Make it deploy
 - [ ] Rebuild UI structure
 - [ ] Set up the database
 - [ ] Attach database and UI
@@ -10,4 +10,4 @@
 - [ ] Connect Spotify
 - [ ] Scrape vinyldeals
 - [ ] Analytics
-- [ ] Ratelimiting 
+- [ ] Ratelimiting

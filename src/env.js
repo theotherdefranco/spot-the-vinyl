@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
