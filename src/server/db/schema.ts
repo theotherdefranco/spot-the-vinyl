@@ -1,10 +1,12 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
+import { table } from "console";
 import { sql } from "drizzle-orm";
 import {
   index,
   pgTableCreator,
+  primaryKey,
   serial,
   timestamp,
   varchar,
@@ -27,5 +29,19 @@ export const artists = createTable(
   },
   (example) => ({
     nameIndex: index("name_idx").on(example.name),
+  }),
+);
+
+export const user_artists = createTable(
+  "user_artists",
+  {
+    artist_id: varchar("artist_id", { length: 256 })
+      .notNull()
+      .references(() => artists.id),
+    user_id: varchar("user_id", { length: 256 }).notNull(),
+    assigned: timestamp("assigned", { precision: 3 }).notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.artist_id, table.user_id] }),
   }),
 );
