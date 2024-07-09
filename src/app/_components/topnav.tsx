@@ -10,7 +10,16 @@ export function TopNav() {
           <SignInButton />
         </SignedOut>
         <SignedIn>
-          <UserButton />
+          <UserButton
+            appearance={{
+              elements: {
+                userButtonAvatarBox: {
+                  width: 56,
+                  height: 56,
+                },
+              },
+            }}
+          />
         </SignedIn>
       </div>
     </nav>

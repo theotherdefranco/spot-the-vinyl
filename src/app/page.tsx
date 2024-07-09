@@ -9,12 +9,17 @@ export default async function HomePage() {
   });
 
   return (
-    <main className="flex h-screen justify-center">
-      <div className="flex flex-wrap gap-4 border-emerald-400">
-        {artists.map((artist) => (
-          <div key={artist.id} className="w-48 p-4">
-            <img src={artist.image} className="rounded-full" />
-            <div className="text-center">{artist.name}</div>
+    <main className="bordder-l flex h-screen justify-center border-r">
+      <div className=" flex h-20 flex-wrap justify-center gap-8">
+        {[...artists, ...artists].map((artist) => (
+          <div key={artist.id} className="p-8 text-center text-slate-200">
+            <img
+              src={artist.image}
+              className="h-40 w-40 rounded-full"
+              width={512}
+              height={512}
+            />
+            <div className="text-center ">{artist.name}</div>
           </div>
         ))}
       </div>
