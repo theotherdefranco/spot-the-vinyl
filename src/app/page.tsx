@@ -1,3 +1,4 @@
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
 import { db } from "~/server/db";
 
@@ -8,11 +9,11 @@ export default async function HomePage() {
     orderBy: (model, { asc }) => asc(model.name),
   });
 
-  return (
-    <main className="bordder-l flex h-screen justify-center border-r">
-      <div className=" flex h-20 flex-wrap justify-center gap-8">
+  async function Images() {
+    return (
+      <div className=" flex h-20 flex-wrap justify-center gap-4">
         {[...artists, ...artists].map((artist) => (
-          <div key={artist.id} className="p-8 text-center text-slate-200">
+          <div key={artist.id} className="p-4 text-center text-slate-200">
             <img
               src={artist.image}
               className="h-40 w-40 rounded-full"
@@ -23,6 +24,19 @@ export default async function HomePage() {
           </div>
         ))}
       </div>
+    );
+  }
+
+  return (
+    <main className="flex h-screen justify-center">
+      <SignedOut>
+        <div className="h-full w-full p-2 text-center text-2xl">
+          Please Sign In
+        </div>
+      </SignedOut>
+      <SignedIn>
+        <Images />
+      </SignedIn>
     </main>
   );
 }
