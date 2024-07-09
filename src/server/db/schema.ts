@@ -18,14 +18,14 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = pgTableCreator((name) => `spot-the-vinyl_${name}`);
+export const createTable = pgTableCreator((name) => `spot_the_vinyl_${name}`);
 
 export const artists = createTable(
   "artist",
   {
     id: varchar("id", { length: 256 }).primaryKey(),
     name: varchar("name", { length: 256 }).notNull(),
-    image: varchar("image", { length: 1024 }),
+    image: varchar("image", { length: 1024 }).notNull(),
   },
   (example) => ({
     nameIndex: index("name_idx").on(example.name),

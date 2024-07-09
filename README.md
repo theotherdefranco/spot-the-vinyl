@@ -5,7 +5,7 @@
 - [x] Make it deploy
 - [ ] Rebuild UI structure
 - [x] Set up the database
-- [ ] Attach database and UI
+- [x] Attach database and UI
 - [ ] Add auth
 - [ ] Connect Spotify
 - [ ] Scrape vinyldeals
