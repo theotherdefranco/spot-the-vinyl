@@ -1,6 +1,9 @@
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 import Link from "next/link";
+
 import { db } from "~/server/db";
+import SpotAuth from "./_components/SpotAuth";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +38,7 @@ export default async function HomePage() {
         </div>
       </SignedOut>
       <SignedIn>
+        <SpotAuth />
         <Images />
       </SignedIn>
     </main>
