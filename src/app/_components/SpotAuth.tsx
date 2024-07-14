@@ -7,9 +7,9 @@ const spotifyTokenStorageID =
 let redirect = "";
 
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-  redirect = "localhost:3000/";
+  redirect = "http://localhost:3000/";
 } else {
-  redirect = "spot-the-vinyl.vercel.app/";
+  redirect = "https://spot-the-vinyl.vercel.app";
 }
 const clientId = process.env.NEXT_PUBLIC_VITE_SPOTIFY_CLIENT_ID;
 console.log(clientId);
